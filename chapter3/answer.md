@@ -9,4 +9,4 @@
 6）调度信息 7）文件系统信息 8）虚拟内存信息 9）处理器环境信息
 
 ###4.Linux内核状态有哪些？
-[Image]: http://www.farsight.com.cn/news/images/emb144-2.jpg/
+<img src='http://www.farsight.com.cn/news/images/emb144-2.jpg/' />
