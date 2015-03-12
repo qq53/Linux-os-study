@@ -9,4 +9,4 @@
 6）调度信息 7）文件系统信息 8）虚拟内存信息 9）处理器环境信息
 
 ###4.Linux内核状态有哪些？
-  ![image]: (status.jpg)
+  ![image]: (https://github.com/qq53/Linux-os-study/blob/master/chapter3/status.jpg)
