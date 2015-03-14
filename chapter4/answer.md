@@ -62,7 +62,8 @@ http://ilinuxkernel.com/?p=1029
 
 ###21.内核非连续空间位于何处?给出创建非连续区代码
 VMALLOC_START ~ 4GB处
-	char *buf = vmalloc(16 * PAGE_SIZE);
+
+    char *buf = vmalloc(16 * PAGE_SIZE);
 	if(!buf)
 	  // error
 	vfree(buf);
@@ -79,4 +80,3 @@ vmalloc适用于不要求连续大的空间 malloc适用于小并且要求连续
 
 ###25.分析kswapd运行时机?你认为怎么换出页面合适?
 在系统可用内存低于极限开始运行,我认为把不活跃干净的页面,老化时换出比较合适
-
