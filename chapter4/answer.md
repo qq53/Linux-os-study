@@ -62,10 +62,10 @@ http://ilinuxkernel.com/?p=1029
 
 ###21.内核非连续空间位于何处?给出创建非连续区代码
 VMALLOC_START ~ 4GB处
-  char *buf = vmalloc(16 * PAGE_SIZE);
-  if(!buf)
-    // error
-  vfree(buf);
+	char *buf = vmalloc(16 * PAGE_SIZE);
+	if(!buf)
+	  // error
+	vfree(buf);
 
 ###22.vmalloc和kmalloc区别
 vmalloc适用于不要求连续大的空间 malloc适用于小并且要求连续的空间
