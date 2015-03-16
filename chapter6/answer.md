@@ -12,7 +12,7 @@
 ###4. system_call()为什么把PCB地址放入EBX寄存器？
 为了以后获取PCB信息方便
 
-###5. 滑出system_call()流程图
+###5. 画出system_call()流程图
 ![p1](system_call.bmp)
 
 ###6. 说明系统调用号的作用？
