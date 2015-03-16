@@ -6,3 +6,4 @@
 	chapter3/ 进程
 	chapter4/ 内存管理
 	chapter5/ 中断和异常
+	chapter6/ 系统调用
