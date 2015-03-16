@@ -52,3 +52,90 @@ CALL指令段内调用将指令指针IP入栈，段间调用先入栈段基址Cs
     }
     
 ###8.内核如何处理异常？
+Linux中为每个IRQ设置了一个队列
+
+    struct irqaction {
+    	irq_handler_t		handler;
+    	void			*dev_id;
+    	void __percpu		*percpu_dev_id;
+    	struct irqaction	*next;
+    	irq_handler_t		thread_fn;
+    	struct task_struct	*thread;
+    	unsigned int		irq;
+    	unsigned int		flags;
+    	unsigned long		thread_flags;
+    	unsigned long		thread_mask;
+    	const char		*name;
+    	struct proc_dir_entry	*dir;
+    } ____cacheline_internodealigned_in_smp;
+
+因为分给I/O设备的中断线只有15个，为了让多个设备共享一个数据线，就要利用上述结构体中的dev_id唯一标识，并用next形成链表
+
+###9.画出中断和异常硬件处理流程，并说明CPU为什么要进行有效性检查？如何检查？CPU如何跳到处理程序的？
+
+    1.确定所发生中断或异常的向量i（在0～255之间）。
+    2.通过IDTR寄存器找到IDT表，读取IDT表第i项（或叫第i个门）。
+    3.分两步进行有效性检查：首先是“段”级检查，将CPU的当前特权级CPL（存放在CS寄存器的最低两位）与IDT中第i项段选择符中的DPL相比较，如果DPL（3）大于CPL（0），就产生一个“通用保护”异常(中断向量13)，因为中断处理程序的特权级不能低于引起中断的程序的特权级。这种情况发生的可能性不大，因为中断处理程序一般运行在内核态，其特权级为0。然后是“门”级检查，把CPL与IDT中第i个门的DPL相比较，如果CPL大于DPL，也就是当前特权级（3）小于这个门的特权级（0），CPU就不能“穿过”这个门，于是产生一个“通用保护”异常，这是为了避免用户应用程序访问特殊的陷阱门或中断门。但是请注意，这种“门”级检查是针对一般的用户程序，而不包括外部I/O产生的中断或因CPU内部异常而产生的异常，也就是说，如果产生了中断或异常，就免去了“门”级检查。
+    4.检查是否发生了特权级的变化。当中断发生在用户态（特权级为3），而中断处理程序运行在内核态（特权级为0），特权级发生了变化，所以会引起堆栈的更换。也就是说，从用户堆栈切换到内核堆栈。而当中断发生在内核态时，即CPU在内核中运行时，则不会更换堆栈
+
+为什么要进行有效性检查: 避免用户访问特殊的陷阱和中断门
+如何检查: 根据中断向量中选择子的DPL和当前特权等级CPL以及门的DPL比较
+
+CPU如何跳到处理程序的：把中断号-256放入桟后调用统一中断处理代码common_interrupt后调用对应的中断服务程序ISR
+
+###10.中断处理程序和中断服务程序有什么区别？
+中断处理程序IH是这个中断号的总处理程序，如果多个设备共享一个中断线，则各个设备可以有自己的中断服务程序ISR
+
+###11.为什么要把中断执行操作进行分类？分为哪几类？
+Linux内核把中断处理分成2部分： 上半部和下半部
+上半部：只进行很少的工作，通常是标记一下数据到达，后立即开中断
+下半部：真正完成中断功能的代码
+
+###12.叙述中断处理程序执行过程，给出函数调用关系
+IRQn_interrupt -> do_IRQ() -> handle_IRQ_event() -> ISR1...ISR2
+
+###13.为什么把中断分为2部分来处理？
+因为中断处理上半部会关中断，如果处理时间过长,CPU就不能及时响应其他请求
+
+###14.如何声明和使用一个小任务？
+声明：
+
+    DECLARE_TASKLET(name,func,data)
+    DECLARE_TASKLET_DUSABLED(name,func,data)  设置count = 1，不允许执行
+    
+使用:
+    
+    tasklet_schedule(tasklet_struct*);
+    tasklet_disable(tasklet_struct*);
+    tasklet_enable(tasklet_struct*);
+    
+###15.实时时钟和操作系统时钟有什么不同？
+实时时钟： 通过CMOS的电池维持，是最原始最底层的时钟数据
+OS时钟： 通过8253/8254芯片时钟中断来维持
+
+###16.jiffies表示什么？什么时候增加？
+节拍数，是Linux中一个全局变量，每次时钟中断都会增加其值，一秒内增加时钟中断频率HZ
+
+###17.时钟中断服务程序主要操作什么？主要函数功能是什么？
+
+    void do_timer(struct pt_regs *regs{
+        jiffies++;
+        
+        update_process_times(user_mode(regs));
+        update_times();
+    }
+    
+主要功能：
+    
+    1) jiffies加1
+    2) 更新资源消耗统计值，系统时间等等
+    3) 执行到时定时器
+    4) 执行scheduler_tick()函数
+    5) 更新墙上时间，放入xtime变量
+    6) 计算平均负载值
+    
+###18.时钟中断下半部分主要做什么？
+通过run_lock_timers()去处理到期的定时器
+
+###20.如何使用定时器?
+通过init_timer()、add_timer()、schedule()、del_timer()
