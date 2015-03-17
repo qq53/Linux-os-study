@@ -7,3 +7,4 @@
 	chapter4/ 内存管理
 	chapter5/ 中断和异常
 	chapter6/ 系统调用
+	chapter7/ 内核中的同步
