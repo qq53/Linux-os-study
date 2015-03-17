@@ -8,4 +8,5 @@
 	chapter5/ 中断和异常
 	chapter6/ 系统调用
 	chapter7/ 内核中的同步
+	chapter7_code/ 练习代码
 	chapter8/ 文件系统
