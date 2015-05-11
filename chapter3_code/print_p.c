@@ -1,22 +1,29 @@
-/// \file mutex.c
+/// \file print_sb.c
 /*
   ------------------------------------
   Create date : 2015-03-09 14:37
-  Modified date: 2015-03-17 15:53
+  Modified date: 2015-03-17 17:06
   Author : Sen1993
   Email : gsen1993@gmail.com
   ------------------------------------
 */
 #include <linux/init.h>
 #include <linux/module.h>
-#include <linux/semaphore.h>
+#include <linux/kernel.h>
+#include <linux/sched.h>
+#include <linux/list.h>
 
 static int __init lkp_init( void ){
-	DEFINE_SEMAPHORE(m);
-
-	down(&m);
-	printk("hello kernel space\n");
-	up(&m);
+	struct task_struct *task, *p;
+	struct list_head *pos;
+	unsigned int count = 0;
+	task = &init_task;
+	list_for_each(pos, &task->tasks){
+		p = list_entry(pos, struct task_struct, tasks);
+		++count;
+		printk("%d %s\n", p->pid, p->comm);
+	}
+	printk("The sum of process: %u\n", count);
 
 	return 0;
 }
