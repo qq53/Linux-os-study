@@ -9,8 +9,8 @@
 	chapter4/ 内存管理
 	chapter4_code/ 内存管理练习代码
 	chapter5/ 中断和异常
+	chapter5_code/ 中断和异常练习代码
 	chapter6/ 系统调用
 	chapter7/ 内核中的同步
-	chapter7_code/ 练习代码
 	chapter8/ 文件系统
 	chapter8_code/ 练习代码
