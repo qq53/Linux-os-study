@@ -5,7 +5,9 @@
 	hlist/  哈系表应用
 	chapter2/ 内存寻址
 	chapter3/ 进程
+	chapter3_code/ 进程练习代码
 	chapter4/ 内存管理
+	chapter4_code/ 内存管理练习代码
 	chapter5/ 中断和异常
 	chapter6/ 系统调用
 	chapter7/ 内核中的同步
