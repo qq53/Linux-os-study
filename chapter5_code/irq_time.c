@@ -3,8 +3,8 @@
 #include<linux/interrupt.h>
 #include<linux/kernel.h>
 
-static int irq;
-static char *interface;
+static int irq = 19;
+static char *interface = "eno16777736";
 static int count = 0;
 
 module_param(irq,int,0644);
