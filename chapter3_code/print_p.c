@@ -12,8 +12,6 @@ static int __init lkp_init( void ){
 		p = list_entry(pos, struct task_struct, tasks);
 		printk("%d: %s %d\n", p->pid, p->comm,p->state);
 	}
-	printk("The sum of process: %u\n", count);
-
 	return 0;
 }
 
